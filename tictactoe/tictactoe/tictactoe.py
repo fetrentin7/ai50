@@ -38,7 +38,6 @@ def player(board):
 
 
 def actions(board):
-
     moves = set()
 
     for i in range(3):
@@ -50,14 +49,12 @@ def actions(board):
 
 
 def checkRow(board, player):
-
     for i in range(len(board)):
         if board[i][0] == player and board[i][1] == player and board[i][2] == player:
             return True
 
 
 def checkColumn(board, player):
-
     for j in range(len(board)):
         if board[0][j] == player and board[1][j] == player and board[2][j] == player:
             return True
@@ -92,7 +89,6 @@ def checkSecondDiagonal(board, player):
 
 
 def winner(board):
-
     if checkRow(board, X) or checkColumn(board, X) or checkSecondDiagonal(board, X) or checkSecondDiagonal(board, X):
         return X
     elif checkRow(board, O) or checkColumn(board, O) or checkSecondDiagonal(board, O) or checkSecondDiagonal(board, O):
@@ -107,25 +103,62 @@ class InvalidActionError(Exception):
 
 
 def result(board, action):
-    if action not in actions(board):
-        raise "Not valid"
+    if action in actions(board):
+        raise Exception("Not valid")
 
     else:
-        i, j = action
+        i = action
+        j = action
         copy_board = copy.deepcopy(board)
         copy_board[i][j] = player(board)
     return copy_board
 
-def minimax():
+
+def utility(board):
+    if winner(board) == X:
+        return X
+
+    elif winner(board) == O:
+        return -1
+
+    else:
+        return 0
 
 
+def min(board):
+    value = math.inf
 
-def utility():
+    if terminal(board):
+        return utility(board)
 
+    for action in actions(board):
+        value = min(value, max(result(board, action)))
+        return value
+
+
+def max(board):
+    value = -math.inf
+
+    if terminal(board):
+        return utility(board)
+
+    for action in actions(board):
+        value = max(value, min(result(board, action)))
+        return value
+
+
+def minimax(board):
+    for action in actions(board):
+        if action == X:
+            return max(board)
+        else:
+            return min(board)
+
+    if terminal(board):
+        return None
 
 
 def terminal(board):
-
     if winner(board):
         return X
 
@@ -133,4 +166,3 @@ def terminal(board):
         return O
     else:
         print("TIE")
-
