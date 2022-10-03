@@ -2,12 +2,7 @@
 Tic Tac Toe Player
 """
 import copy
-
-import tictactoe as ttt
-
 import math
-import random
-from copy import deepcopy
 
 X = "X"
 O = "O"
@@ -28,20 +23,24 @@ def player(board):
     player_o = 0
 
     for i in range(len(board)):
-        for j in range(len(board[i])):
+        for j in range(len(board[0])):
             if board[i][j] == X:
                 player_x += 1
-                return player_x
-            else:
-                player_o += 1
-                return player_o
+
+            if board[i][j] == O:
+                player_o = player_o + 1
+
+    if player_x > player_o:
+        return O
+    else:
+        return X
 
 
 def actions(board):
     moves = set()
 
-    for i in range(3):
-        for j in range(3):
+    for i in range(0, len(board)):
+        for j in range(0, len(board[0])):
             if board[i][j] == EMPTY:
                 moves.add((i, j))
 
@@ -65,7 +64,7 @@ def checkFirstDioganal(board, player):
 
     for i in range(len(board)):
         for j in range(len(board[i])):
-            if i == j and board[i][j] == player:
+            if board[i][j] == player and i == j:
                 counter = counter + 1
 
     if counter == 3:
@@ -88,30 +87,29 @@ def checkSecondDiagonal(board, player):
         return False
 
 
-def winner(board):
-    if checkRow(board, X) or checkColumn(board, X) or checkSecondDiagonal(board, X) or checkSecondDiagonal(board, X):
-        return X
-    elif checkRow(board, O) or checkColumn(board, O) or checkSecondDiagonal(board, O) or checkSecondDiagonal(board, O):
-        return O
+def result(board, action):
+    result = copy.deepcopy(board)
 
-    else:
-        print("TIE")
+    result[action[0]][action[1]] = player(board)
+    return result
+
+
+def winner(board):
+    if checkRow(board, X) or checkColumn(board, X) or checkFirstDioganal(board, X) or checkSecondDiagonal(board, X):
+        return X
+    elif checkRow(board, O) or checkColumn(board, O) or checkFirstDioganal(board, O) or checkSecondDiagonal(board, O):
+        return O
 
 
 class InvalidActionError(Exception):
     pass
 
 
-def result(board, action):
-    if action in actions(board):
-        raise Exception("Not valid")
-
+def terminal(board):
+    if winner(board) is not None:
+        return True
     else:
-        i = action
-        j = action
-        copy_board = copy.deepcopy(board)
-        copy_board[i][j] = player(board)
-    return copy_board
+        return False
 
 
 def utility(board):
@@ -125,44 +123,52 @@ def utility(board):
         return 0
 
 
-def min(board):
-    value = math.inf
-
-    if terminal(board):
-        return utility(board)
-
-    for action in actions(board):
-        value = min(value, max(result(board, action)))
-        return value
-
-
-def max(board):
-    value = -math.inf
-
-    if terminal(board):
-        return utility(board)
-
-    for action in actions(board):
-        value = max(value, min(result(board, action)))
-        return value
-
-
 def minimax(board):
-    for action in actions(board):
-        if action == X:
-            return max(board)
-        else:
-            return min(board)
-
+    # Returns the optimal action for the current player on the board.
     if terminal(board):
         return None
 
-
-def terminal(board):
-    if winner(board):
-        return X
-
-    elif winner(board):
-        return O
     else:
-        print("TIE")
+        if player(board) == X:
+            move = max_value(board)
+            return move
+
+        else:
+            move = min_value(board)
+            return move
+
+
+def min_value(board):
+    if terminal(board):
+        return utility(board), None
+
+    v = float('inf')
+    move = None
+    for action in actions(board):
+        aux = max_value(result(board, action))
+        if aux < v:
+            v = aux
+            move = action
+            if v == -1:
+                return v, move
+
+    return v, move
+
+
+def max_value(board):
+    if terminal(board):
+        return utility(board), None
+
+    v = float('-inf')
+
+    move = None
+    for action in actions(board):
+
+        aux, action = min_value(result(board, action))
+        if aux > v:
+            v = aux
+            move = action
+            if v == 1:
+                return v, move
+
+    return v, move
