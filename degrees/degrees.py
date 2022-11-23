@@ -91,12 +91,27 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    #to put an explored actor in a set
+    path_visited = set()
 
-    #movie 1 person two
-    #0 t0 1
+    frontier = QueueFrontier()
+    number_explored = 0 #keep track of explored nodes
+    start_position = Node(state=source, parent=None, action=None)
 
+    frontier.add(start_position)
 
+    while True:
+        if frontier.empty():
+            return None
 
+        node = frontier.remove()
+        path_visited = frontier.add(node)
+
+        for action, state in neighbors_for_person(node.state):
+            child = Node(state=state, parent=node, action=action)
+            if child.state == target:
+                list = []
+                node = child
 
 def person_id_for_name(name):
     """
