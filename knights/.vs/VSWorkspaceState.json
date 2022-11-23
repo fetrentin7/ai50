@@ -1,7 +1,7 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\__pycache__"
   ],
-  "SelectedNode": "\\puzzle.py",
   "PreviewInSolutionExplorer": false
 }
