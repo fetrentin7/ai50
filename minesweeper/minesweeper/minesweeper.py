@@ -193,12 +193,19 @@ class MinesweeperAI:
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        for cell in self.safes:
-            if cell in self.moves_made:
-                return cell  # return moves --> i j
+        self.moves_made.add(cell)
 
-        return None
+        self.mark_safe(cell)
 
+        cell_undefined = []
+        counter = 0
+        for i in range(cell[0] - 1, cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+                if (i, j) in self.mines:  # must be a tuple
+                    counter = counter + 1
+
+                elif 0 <= i < self.height and 0 <= j < self.width and (i, j) not in self.mines:
+                    cell_undefined.append((i, j))
 
     def make_safe_move(self):
         """
