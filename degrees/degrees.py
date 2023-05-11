@@ -109,8 +109,18 @@ def shortest_path(source, target):
                 child = Node(state=person, parent=None, action=movie)
 
                 if child.state == target:
-                    child = child.parent
+                    shortest = []
 
+                    while child.parent is not None:
+                        shortest.append(child.action)
+                        shortest.append(child.state)
+                        child = child.parent
+
+                    return shortest.reverse()
+                else:
+                    frontier.add(child)
+
+        path_visited.add(node.state)
 
 def person_id_for_name(name):
     """
