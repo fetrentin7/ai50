@@ -83,7 +83,8 @@ def main():
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
-#path cost
+
+# path cost
 def shortest_path(source, target):
     """
     Returns the shortest list of (movie_id, person_id) pairs
@@ -91,27 +92,25 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    #to put an explored actor in a set
     path_visited = set()
-
+    start_pos = Node(state=source, parent=None, action=None)
     frontier = QueueFrontier()
-    number_explored = 0 #keep track of explored nodes
-    start_position = Node(state=source, parent=None, action=None)
 
-    frontier.add(start_position)
-
+    frontier.add(start_pos)
     while True:
         if frontier.empty():
             return None
 
         node = frontier.remove()
-        path_visited = frontier.add(node)
+        path_visited.add(node.state)
 
-        for action, state in neighbors_for_person(node.state):
-            child = Node(state=state, parent=node, action=action)
-            if child.state == target:
-                list = []
-                node = child
+        for movie, person in neighbors_for_person(node.state):
+            if not frontier.contains_state(person) and person not in path_visited:
+                child = Node(state=person, parent=None, action=movie)
+
+                if child.state == target:
+                    child = child.parent
+
 
 def person_id_for_name(name):
     """
