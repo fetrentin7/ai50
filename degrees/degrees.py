@@ -99,6 +99,8 @@ def shortest_path(source, target):
     explored_counter = 0
     frontier.add(initial_state)
 
+
+
     while True:
         if frontier.empty():
             return None
@@ -110,7 +112,7 @@ def shortest_path(source, target):
         neighbors = neighbors_for_person(node.state)
 
         for movies_id, people_id in neighbors:
-            #if does not contain both add new node
+            # if it is not contain both add new node
             if not frontier.contains_state(movies_id) and people_id not in explored:
                 child = Node(state=people_id, parent=None, action=movies_id)
 
@@ -127,6 +129,7 @@ def shortest_path(source, target):
                 else:
                     frontier.add(child)
         frontier.add(node.state)
+
 
 def person_id_for_name(name):
     """
